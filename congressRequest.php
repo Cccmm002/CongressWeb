@@ -5,13 +5,48 @@
     if($_GET["database"])
         $database=$_GET["database"];
     if($_GET["id"]) {
-        
+        if($_GET["database"]=="legislators")
+            getLegislatorDetail($_GET["id"],$url_prefix,$api_key);
     }
     else {
         if($_GET["database"]=="states")
             getStateNames($url_prefix,$api_key);
-        else if($_GET["database"]=="legislators")
+        else if($_GET["database"]=="legislators") 
             getTotalLegislators($url_prefix,$api_key);
+    }
+
+    function getLegislatorDetail($id,$url_prefix,$api_key) {
+        $data=array();
+        $persoanlRequestUrl=$url_prefix . "legislators" . "?bioguide_id=" . $id . "&apikey=" . $api_key;
+        $obj=json_decode(file_get_contents($persoanlRequestUrl));
+        $data["personal"]=$obj->results[0];
+        $comRequestUrl=$url_prefix . "committees?member_ids=" . $id . "&apikey=" . $api_key;
+        $committees=json_decode(file_get_contents($comRequestUrl));
+        $data["committees"]=array();
+        $com_count=$committees->count;
+        $i=0;
+        while($i<$com_count && $i<5) {
+            array_push($data["committees"], $committees->results[$i]);
+            $i=$i+1;
+        }
+        $billReqestUrl=$url_prefix . "bills?sponsor_id=" . $id . "&apikey=" . $api_key;
+        $bills=json_decode(file_get_contents($billReqestUrl));
+        $data["bills"]=array();
+        $bill_count=$bills->count;
+        $i=0;
+        while($i<$bill_count && $i<5) {
+            $cur=array(
+                "bill_id" => $bills->results[$i]->bill_id,
+                "official_title" => $bills->results[$i]->official_title,
+                "chamber" => $bills->results[$i]->chamber,
+                "bill_type" =>$bills->results[$i]->bill_type,
+                "congress" => $bills->results[$i]->congress,
+                "urls" => $bills->results[$i]->urls,
+            );
+            array_push($data["bills"],$cur);
+            $i=$i+1;
+        }
+        echo json_encode($data);
     }
 
     function legSortHelper($a, $b) {

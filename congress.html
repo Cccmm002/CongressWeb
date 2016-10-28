@@ -3,14 +3,16 @@
 <head>
     <meta charset="utf-8">
     <title>United States Congress</title>
+    <link href="library/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="library/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="library/jquery-3.1.1.min.js"></script>
+    <script src="library/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="library/angular.min.js"></script>
     <script src="library/angular-animate.js"></script>
     <script src="library/ui-bootstrap-tpls-2.2.0.min.js"></script>
     <script src="library/dirPagination.js"></script>
+    <script src="library/moment.min.js"></script>
     <script src="congress.js"></script>
-    <link href="library/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="library/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="congress.css" rel="stylesheet">
 </head>
 <header class="top-header navbar-fixed-top">
@@ -40,10 +42,16 @@
         </ul>
     </nav>
     <div class="rightBox">
-        <div id="legislatorPage" class="rightBoxPage contanier" ng-show="mainTab.isSelected(1)">
+        <div id="legislatorPage" class="rightBoxPage contanier" ng-show="mainTab.isSelected(1)" ng-controller="legDetailsPanelController as panelDetails">
             <h2>Legislators</h2>
             <hr>
-            <div id="legListPanel" class="panel panel-default panel-shadow">
+            <div id="legis" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#legis" data-slide-to="0" class="active"></li>
+                <li data-target="#legis" data-slide-to="1"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+            <div id="legListPanel" class="panel panel-default panel-shadow item active">
                 <uib-tabset>
                     <uib-tab heading="By State">
                     <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
@@ -57,12 +65,12 @@
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
                                 <tr dir-paginate="x in people | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPage">
-                                    <td><img src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                    <td><img src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
-                                    <td><button type="button" class="btn btn-primary">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -70,7 +78,7 @@
                             </div>
                         </div>
                     </div>
-                    </uib-tab>    
+                    </uib-tab>
                     <uib-tab heading="House">
                         
                     </uib-tab>
@@ -78,6 +86,46 @@
                         
                     </uib-tab>
                 </uib-tabset>
+            </div>
+            <div id="legDetails" class="panel panel-default panel-shadow item">
+                <div class="panel-heading" style="background-color: white;">
+                    <button id="legDetailReturn" type="button" class="btn btn-default">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <h3 class="panel-title" style="display: inline;">Details</h3>
+                </div>
+                <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                       <table class="table" style="margin-top: 10px;"><tr>
+                           <td style="width: 35%;"><img src="https://theunitedstates.io/images/congress/original/{{legislator.personal.bioguide_id}}.jpg" alt="{{legislator.personal.first_name+' '+legislator.personal.first_name}}" height=200px></td>
+                           <td><table class="table">
+                               <tr><td>{{legislator.personal.title}}. {{legislator.personal.last_name}}, {{legislator.personal.first_name}}</td></tr>
+                               <tr><td><a href="mailto:{{legislator.personal.oc_email}}">{{legislator.personal.oc_email}}</a></td></tr>
+                               <tr><td>Chamber: {{legislator.personal.chamber==='house'?'House':'Senate'}}</td></tr>
+                               <tr><td>Contact: <a href="tel: {{legislator.personal.phone}}">{{legislator.personal.phone}}</a></td></tr>
+                               <tr><td><img src="{{legislator.personal.party==='R'?'images/republicans.png':(legislator.personal.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{legislator.personal.party}}" height="30px" class="tableImages">{{legislator.personal.party==='R'?'Republican':(legislator.personal.party==='D'?'Democrat':'Independent')}}</td></tr>
+                           </table></td>
+                        </tr></table>
+                        <table class="table">
+                            <tr><td><b>Start Term</b></td><td>{{formatTime(legislator.personal.term_start)}}</td></tr>
+                            <tr><td><b>End Term</b></td><td>{{formatTime(legislator.personal.term_end)}}</td></tr>
+                            <tr><td><b>Term</b></td><td><div class="progress"><div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}" style="width: {{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%;">{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%</div></div></td></tr>
+                            <tr><td><b>Office</b></td><td>{{legislator.personal.office}}</td></tr>
+                            <tr><td><b>State</b></td><td>{{legislator.personal.state_name}}</td></tr>
+                            <tr><td><b>Fax</b></td><td><a href="tel: {{legislator.personal.fax}}">{{legislator.personal.fax}}</a></td></tr>
+                            <tr><td><b>Birthday</b></td><td>{{formatTime(legislator.personal.birthday)}}</td></tr>
+                            <tr><td><b>Social Links</b></td><td></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        +++++++++++++++++++++++++++
+                    </div>
+                </div>
+                WOWWWWWWWW
+                </div>
+            </div>
+            </div>
             </div>
         </div>
         <div id="billPage" class="rightBoxPage" ng-show="mainTab.isSelected(2)">
@@ -93,5 +141,6 @@
             <hr>
         </div>
     </div>
+    <script>$('.carousel').carousel('pause');</script>
 </body>
 </html>

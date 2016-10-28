@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>United States Congress</title>
+    <script src="library/jquery-3.1.1.min.js"></script>
+    <script src="library/angular.min.js"></script>
+    <script src="library/angular-animate.js"></script>
+    <script src="library/ui-bootstrap-tpls-2.2.0.min.js"></script>
+    <script src="library/dirPagination.js"></script>
+    <script src="congress.js"></script>
+    <link href="library/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="library/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="congress.css" rel="stylesheet">
+</head>
+<header class="top-header navbar-fixed-top">
+    <button id="navButton" type="button" class="btn btn-default nav_button" style="border: 0; margin-top: 4px;">
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+    </button>
+    <div class="logo">
+        <a href="http://sunlightfoundation.com/" target="_blank"><img src="images/logo.png" alt="Sunlight Foundation"></a>
+        <b class="h4">Congress API</b>
+    </div>
+</header>
+<body ng-app="congressApp" ng-controller="mainTabController as mainTab">
+    <nav class="navbar navbar-inverse navbar-fixed-left" role="navigation" style="display:block;">
+        <ul class="nav navbar-nav" style="padding-top: 15px;">
+            <li ng-class="{ active:mainTab.isSelected(1) }">
+                <a href ng-click="mainTab.selectTab(1)"><i class="fa fa-user navbar-faicon" aria-hidden="true"></i>Legislators</a>
+            </li>
+            <li ng-class="{ active:mainTab.isSelected(2) }">
+                <a href ng-click="mainTab.selectTab(2)"><i class="fa fa-file-o navbar-faicon" aria-hidden="true"></i>Bills</a>
+            </li>
+            <li ng-class="{ active:mainTab.isSelected(3) }">
+                <a href ng-click="mainTab.selectTab(3)"><i class="fa fa-sign-in navbar-faicon" aria-hidden="true"></i>Committees</a>
+            </li>
+            <li ng-class="{ active:mainTab.isSelected(4) }">
+                <a href ng-click="mainTab.selectTab(4)"><i class="fa fa-star navbar-faicon" aria-hidden="true"></i>Favorites</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="rightBox">
+        <div id="legislatorPage" class="rightBoxPage contanier" ng-show="mainTab.isSelected(1)">
+            <h2>Legislators</h2>
+            <hr>
+            <div id="legListPanel" class="panel panel-default panel-shadow">
+                <uib-tabset>
+                    <uib-tab heading="By State">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by State</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><select name="stateSelect" class="form-control panelHeaderDropdown" ng-model="legStateFilter" ng-options="state for state in stateNames">
+                                <option value selected>All States</option>
+                            </select></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
+                                <tr dir-paginate="x in people | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPage">
+                                    <td><img src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                    <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
+                                    <td><img src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
+                                    <td><button type="button" class="btn btn-primary">View Details</button></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="legPage"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </uib-tab>    
+                    <uib-tab heading="House">
+                        
+                    </uib-tab>
+                    <uib-tab heading="Senate">
+                        
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+        <div id="billPage" class="rightBoxPage" ng-show="mainTab.isSelected(2)">
+            <h2>Bills</h2>
+            <hr>
+        </div>
+        <div id="committeePage" class="rightBoxPage" ng-show="mainTab.isSelected(3)">
+            <h2>Committees</h2>
+            <hr>
+        </div>
+        <div id="favoritePage" class="rightBoxPage" ng-show="mainTab.isSelected(4)">
+            <h2>Favorites</h2>
+            <hr>
+        </div>
+    </div>
+</body>
+</html>

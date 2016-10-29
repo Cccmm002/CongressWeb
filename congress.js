@@ -6,6 +6,10 @@ $(document).ready(function(){
         $("#legis").carousel('prev');
         $('#legis').carousel('pause');
     });
+    $('#billDetailReturn').click(function(){
+        $('#billsCarousel').carousel('prev');
+        $('#billsCarousel').carousel('pause');
+    });
     $("#navButton").click(function(){
         if($("nav").css("display")==="none") {
             $("nav").css("display","block");
@@ -33,6 +37,18 @@ $(document).ready(function(){
         $(this).show('show');
     });
     $('#newBills a').click(function(e){
+        e.preventDefault();
+        $(this).show('show');
+    });
+    $('#comByHouse a').click(function(e){
+        e.preventDefault();
+        $(this).show('show');
+    });
+    $('#comBySenate a').click(function(e){
+        e.preventDefault();
+        $(this).show('show');
+    });
+    $('#comByJoint a').click(function(e){
         e.preventDefault();
         $(this).show('show');
     });
@@ -69,8 +85,17 @@ app.controller('billsTableController',function($scope,$http){
     });
     
     $scope.upper=function(str){
-        return str.toUpperCase();
+        if(str)
+            return str.toUpperCase();
     };
+    
+});
+
+app.controller('committeeTableController',function($scope,$http){
+    
+    $http.get(requestUrl + "?database=committees").then(function(response){
+        $scope.committees=response.data;
+    });
     
 });
 
@@ -105,11 +130,21 @@ app.controller('billsPanelController',function($scope,$http){
     $scope.bill=null;
     
     this.detailShow=function(bill_id){
-        $http.get(requestUrl + "?database=legislators&id=" + bill_id.substr(1)).then(function(response){
+        $http.get(requestUrl + "?database=bills&id=" + bill_id.substr(1)).then(function(response){
             $scope.bill=response.data;
         });
         $('#billsCarousel').carousel('next');
         $('#billsCarousel').carousel('pause');
+    };
+    
+    $scope.upper=function(str){
+        if(str)
+            return str.toUpperCase();
+    };
+    
+    $scope.timeFormat=function(time){
+        var t=moment(time,"YYYY-MM-DD");
+        return t.format("MMM D, YYYY");
     };
     
 });

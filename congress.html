@@ -211,7 +211,6 @@
                 <li data-target="#billsCarousel" data-slide-to="0" class="active"></li>
                 <li data-target="#billsCarousel" data-slide-to="1"></li>
             </ol>
-            </div>
             <div class="carousel-inner" role="listbox">
             <div id="billsPanel" class="panel panel-default panel-shadow item active">
                 <ul class="nav nav-tabs" role="tablist">
@@ -253,7 +252,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Bill ID</th><th>Bill Type</th><th style="width: 25%">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
-                                <tr dir-paginate="x in bills | filter:{active:false} | filter:searchActiveBills | itemsPerPage:10" pagination-id="billNewPage">
+                                <tr dir-paginate="x in bills | filter:{active:false} | filter:searchNewBills | itemsPerPage:10" pagination-id="billNewPage">
                                     <td>{{upper(x.bill_id)}}</td>
                                     <td>{{upper(x.bill_type)}}</td>
                                     <td style="width: 25%">{{x.official_title}}</td>
@@ -272,12 +271,122 @@
                 </div>
             </div>
             <div id="billDetails" class="panel panel-default panel-shadow item">
+                <div class="panel-heading" style="background-color: white;">
+                    <button id="billDetailReturn" class="btn btn-default">
+                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <h3 class="panel-title" style="display: inline;">Details</h3>
+                    <button type=button class="btn btn-default" style="float: right;">
+                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="container">
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-md-6">
+                        <table class="table">
+                            <tr><td><b>Bill ID</b></td><td>{{bill.bill_id}}</td></tr>
+                            <tr><td><b>Title</b></td><td>{{bill.official_title}}</td></tr>
+                            <tr><td><b>Bill Type</b></td><td>{{upper(bill.bill_type)}}</td></tr>
+                            <tr><td><b>Sponsor</b></td><td>{{bill.sponsor.title}}. {{bill.sponsor.last_name}}, {{bill.sponsor.first_name}}</td></tr>
+                            <tr><td><b>Chamber</b></td><td>{{bill.chamber==='house'?'House':'Senate'}}</td></tr>
+                            <tr><td><b>Status</b></td><td>{{bill.history.active===true?'Active':'New'}}</td></tr>
+                            <tr><td><b>Introduced on</b></td><td>{{timeFormat(bill.introduced_on)}}</td></tr>
+                            <tr><td><b>Congress URL</b></td><td><a href="{{bill.urls.congress}}" target="_blank">URL</a></td></tr>
+                            <tr><td><b>Version Status</b></td><td>{{bill.last_version.version_name}}</td></tr>
+                            <tr><td><b>Bill URL</b></td><td><a href="{{bill.last_version.urls.pdf}}" target="_blank">Link</a></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <object width="100%" height="500px" data="{{bill.last_version.urls.pdf}}"></object>
+                    </div>
+                </div>
+                </div>
             </div>
             </div>
+        </div>
         </div>
         <div id="committeePage" class="rightBoxPage" ng-show="mainTab.isSelected(3)">
             <h2>Committees</h2>
             <hr>
+            <div id="legListPanel" class="panel panel-default panel-shadow">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#comByHouse" aria-controls="comByHouse" role="tab" data-toggle="tab">House</a></li>
+                    <li role="presentation"><a href="#comBySenate" aria-controls="comBySenate" role="tab" data-toggle="tab">Senate</a></li>
+                    <li role="presentation"><a href="#comByJoint" aria-controls="comByJoint" role="tab" data-toggle="tab">Joint</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="comByHouse">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="committeeTableController as com">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>House</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="comSearchHouse" class="form-control panelHeaderDropdown"></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th><th>Contact</th><th>Office</th></tr>
+                                <tr dir-paginate="x in committees | filter:{chamber:'house'} | filter:comSearchHouse | itemsPerPage: 10" pagination-id="comPageHouse">
+                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.name}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.parent_committee_id}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.phone}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.office?x.office:'N.A'}}</div></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="comPageHouse"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="comBySenate">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="committeeTableController as com">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>Senate</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="comSearchSenate" class="form-control panelHeaderDropdown"></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th></tr>
+                                <tr dir-paginate="x in committees | filter:{chamber:'senate'} | filter:comSearchSenate | itemsPerPage: 10" pagination-id="comPageSenate">
+                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.name}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.parent_committee_id}}</div></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="comPageSenate"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="comByJoint">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="committeeTableController as com">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>Joint</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="comSearchJoint" class="form-control panelHeaderDropdown"></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th></tr>
+                                <tr dir-paginate="x in committees | filter:{chamber:'joint'} | filter:comSearchJoint | itemsPerPage: 10" pagination-id="comPageJoint">
+                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td><img src="images/senate.svg" alt="Joint" height="30px" class="tableImages">Joint</td>
+                                    <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.name}}</div></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="comPageJoint"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="favoritePage" class="rightBoxPage" ng-show="mainTab.isSelected(4)">
             <h2>Favorites</h2>

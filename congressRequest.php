@@ -7,6 +7,8 @@
     if($_GET["id"]) {
         if($_GET["database"]=="legislators")
             getLegislatorDetail($_GET["id"],$url_prefix,$api_key);
+        else if($_GET["database"]=="bills")
+            getBillDetail($_GET["id"],$url_prefix,$api_key);
     }
     else {
         if($_GET["database"]=="states")
@@ -28,6 +30,25 @@
                 echo $json_data;
             }
         }
+        else if($_GET["database"]=="committees") {
+            if(file_exists("committees.json")) {
+                echo file_get_contents("committees.json");
+            }
+            else {
+                $url=$url_prefix . "committees?per_page=all&apikey=" . $api_key;
+                $obj=json_decode(file_get_contents($url));
+                $res=json_encode($obj->results);
+                file_put_contents("committees.json", $res);
+                echo $res;
+            }
+        }
+    }
+
+    function getBillDetail($id,$url_prefix,$api_key) {
+        $url=$url_prefix . "bills?bill_id=" . $id . "&apikey=" . $api_key;
+        $obj=json_decode(file_get_contents($url));
+        $data=$obj->results[0];
+        echo json_encode($data);
     }
 
     function getBills($url_prefix,$api_key,$active) {
@@ -100,7 +121,7 @@
     }
 
     function getStateNames($url_prefix,$api_key) {
-        $arr=["Alabama","Alaska","American Samoa","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Guam","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Northern Mariana Islands","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","US Virgin Islands","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
+        $arr=["Alabama","Alaska","American Samoa","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Guam","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Northern Mariana Islands","Ohio","Oklahoma","Oregon","Pennsylvania","Puerto Rico","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","US Virgin Islands","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
         echo json_encode($arr);
     }
 

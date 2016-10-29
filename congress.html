@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>United States Congress</title>
     <link href="library/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="library/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -87,7 +88,7 @@
                     <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
                         <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
                             <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by House</b></div>
-                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchHouse" style="float: right;"></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchHouse" class="panelHeaderDropdown"></div>
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
@@ -111,7 +112,7 @@
                     <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
                         <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
                             <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by Senate</b></div>
-                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchSenate" style="float: right;"></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchSenate" class="panelHeaderDropdown"></div>
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
@@ -146,17 +147,19 @@
                 <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                       <table class="table" style="margin-top: 10px;"><tr>
-                           <td style="width: 35%;"><img ng-src="https://theunitedstates.io/images/congress/original/{{legislator.personal.bioguide_id}}.jpg" alt="{{legislator.personal.first_name+' '+legislator.personal.first_name}}" height=200px></td>
-                           <td><table class="table">
+                       <div class="row" style="margin-top: 10px;">
+                           <div class="col-md-4" style="text-align: center;">
+                               <img ng-src="https://theunitedstates.io/images/congress/original/{{legislator.personal.bioguide_id}}.jpg" alt="{{legislator.personal.first_name+' '+legislator.personal.first_name}}" height=200px>
+                           </div>
+                           <div class="col-md-8"><table class="table">
                                <tr><td>{{legislator.personal.title}}. {{legislator.personal.last_name}}, {{legislator.personal.first_name}}</td></tr>
                                <tr><td><a href="mailto:{{legislator.personal.oc_email}}">{{legislator.personal.oc_email}}</a></td></tr>
                                <tr><td>Chamber: {{legislator.personal.chamber==='house'?'House':'Senate'}}</td></tr>
                                <tr><td>Contact: <a href="tel: {{legislator.personal.phone}}">{{legislator.personal.phone}}</a></td></tr>
                                <tr><td><img ng-src="{{legislator.personal.party==='R'?'images/republicans.png':(legislator.personal.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{legislator.personal.party}}" height="30px" class="tableImages">{{legislator.personal.party==='R'?'Republican':(legislator.personal.party==='D'?'Democrat':'Independent')}}</td></tr>
-                           </table></td>
-                        </tr></table>
-                        <table class="table">
+                           </table></div>
+                        </div>
+                        <table class="table table-responsive">
                             <tr><td><b>Start Term</b></td><td>{{formatTime(legislator.personal.term_start)}}</td></tr>
                             <tr><td><b>End Term</b></td><td>{{formatTime(legislator.personal.term_end)}}</td></tr>
                             <tr><td><b>Term</b></td><td><div class="progress"><div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}" style="width: {{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%;">{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%</div></div></td></tr>
@@ -173,7 +176,7 @@
                     </div>
                     <div class="col-md-6">
                         <h4>Committees</h4>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <tr><th>Chamber</th><th>Committee ID</th><th>Name</th></tr>
                             <tr ng-repeat="x in legislator.committees">
                                 <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
@@ -182,7 +185,7 @@
                             </tr>
                         </table>
                         <h4>Bills</h4>
-                        <table class="table">
+                        <table class="table table-responsive">
                             <tr><th>Bill ID</th><th>Title</th><th>Chamber</th><th>Bill Type</th><th>Congress</th><th>Link</th></tr>
                             <tr ng-repeat="x in legislator.bills">
                                 <td>{{x.bill_id}}</td>
@@ -190,7 +193,7 @@
                                 <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
                                 <td>{{x.bill_type}}</td>
                                 <td>{{x.congress}}</td>
-                                <td></td>
+                                <td><a href="{{x.urls.congress}}" target="_blank">Link</a></td>
                             </tr>
                         </table>
                     </div>

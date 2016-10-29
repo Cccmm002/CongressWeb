@@ -3,6 +3,39 @@ body {
     padding-top: 40px;
 }
 
+@media screen and (max-width: 768px) {
+    .navText {
+        display: none;
+    }
+    
+    .navbar-fixed-left {
+        width: 50px;
+    }
+    
+    .navbar-fixed-left a {
+        width: 45px;
+        margin-left: 14px;
+    }
+    
+    .rightBox {
+        margin-left: 50px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .navText {
+        display: inline;
+    }
+    
+    .navbar-fixed-left {
+        width: 150px;
+    }
+    
+    .rightBox {
+        margin-left: 150px;
+    }
+}
+
 .top-header {
     text-align: center;
     background-color: white;
@@ -18,7 +51,6 @@ body {
 }
 
 .navbar-fixed-left {
-    width: 150px;
     position: fixed;
     border-radius: 0;
     height: 100%;
@@ -26,7 +58,6 @@ body {
 }
 
 .rightBox {
-    margin-left: 150px;
     padding-left: 15px;
     padding-right: 15px;
     height: 100%;

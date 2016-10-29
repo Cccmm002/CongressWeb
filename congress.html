@@ -9,7 +9,6 @@
     <script src="library/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="library/angular.min.js"></script>
     <script src="library/angular-animate.js"></script>
-    <script src="library/ui-bootstrap-tpls-2.2.0.min.js"></script>
     <script src="library/dirPagination.js"></script>
     <script src="library/moment.min.js"></script>
     <script src="congress.js"></script>
@@ -28,16 +27,16 @@
     <nav class="navbar navbar-inverse navbar-fixed-left" role="navigation" style="display:block;">
         <ul class="nav navbar-nav" style="padding-top: 15px;">
             <li ng-class="{ active:mainTab.isSelected(1) }">
-                <a href ng-click="mainTab.selectTab(1)"><i class="fa fa-user navbar-faicon" aria-hidden="true"></i>Legislators</a>
+                <a href ng-click="mainTab.selectTab(1)"><i class="fa fa-user navbar-faicon" aria-hidden="true"></i><span class="navText">Legislators</span></a>
             </li>
             <li ng-class="{ active:mainTab.isSelected(2) }">
-                <a href ng-click="mainTab.selectTab(2)"><i class="fa fa-file-o navbar-faicon" aria-hidden="true"></i>Bills</a>
+                <a href ng-click="mainTab.selectTab(2)"><i class="fa fa-file-o navbar-faicon" aria-hidden="true"></i><span class="navText">Bills</span></a>
             </li>
             <li ng-class="{ active:mainTab.isSelected(3) }">
-                <a href ng-click="mainTab.selectTab(3)"><i class="fa fa-sign-in navbar-faicon" aria-hidden="true"></i>Committees</a>
+                <a href ng-click="mainTab.selectTab(3)"><i class="fa fa-sign-in navbar-faicon" aria-hidden="true"></i><span class="navText">Committees</span></a>
             </li>
             <li ng-class="{ active:mainTab.isSelected(4) }">
-                <a href ng-click="mainTab.selectTab(4)"><i class="fa fa-star navbar-faicon" aria-hidden="true"></i>Favorites</a>
+                <a href ng-click="mainTab.selectTab(4)"><i class="fa fa-star navbar-faicon" aria-hidden="true"></i><span class="navText">Favorites</span></a>
             </li>
         </ul>
     </nav>
@@ -45,15 +44,20 @@
         <div id="legislatorPage" class="rightBoxPage contanier" ng-show="mainTab.isSelected(1)" ng-controller="legDetailsPanelController as panelDetails">
             <h2>Legislators</h2>
             <hr>
-            <div id="legis" class="carousel slide" data-ride="carousel">
+            <div id="legis" class="carousel slide" data-ride="carousel" data-interval="false">
             <ol class="carousel-indicators">
                 <li data-target="#legis" data-slide-to="0" class="active"></li>
                 <li data-target="#legis" data-slide-to="1"></li>
             </ol>
             <div class="carousel-inner" role="listbox">
             <div id="legListPanel" class="panel panel-default panel-shadow item active">
-                <uib-tabset>
-                    <uib-tab heading="By State">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#byState" aria-controls="byState" role="tab" data-toggle="tab">By State</a></li>
+                    <li role="presentation"><a href="#byHouse" aria-controls="byHouse" role="tab" data-toggle="tab">House</a></li>
+                    <li role="presentation"><a href="#bySenate" aria-controls="bySenate" role="tab" data-toggle="tab">Senate</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="byState">
                     <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
                         <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
                             <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by State</b></div>
@@ -64,28 +68,70 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
-                                <tr dir-paginate="x in people | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPage">
-                                    <td><img src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                <tr dir-paginate="x in people | orderBy:'state_name' | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPageState">
+                                    <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
-                                    <td><img src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
                                     <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
-                                <dir-pagination-controls pagination-id="legPage"></dir-pagination-controls>
+                                <dir-pagination-controls pagination-id="legPageState"></dir-pagination-controls>
                             </div>
                         </div>
                     </div>
-                    </uib-tab>
-                    <uib-tab heading="House">
-                        
-                    </uib-tab>
-                    <uib-tab heading="Senate">
-                        
-                    </uib-tab>
-                </uib-tabset>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="byHouse">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by House</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchHouse" style="float: right;"></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
+                                <tr dir-paginate="x in people | filter:{chamber:'house'} | filter:searchHouse | itemsPerPage: 10" pagination-id="legPageHouse">
+                                    <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                    <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="legPageHouse"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="bySenate">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="legislatorTableController as leg">
+                        <div class="panel-heading row" style="margin-right: 0; margin-left: 0;">
+                            <div class="col-sm-6 col-xs-6 col-md-6"><b>Legislators by Senate</b></div>
+                            <div class="col-sm-6 col-xs-6 col-md-6"><input placeholder="Search" ng-model="searchSenate" style="float: right;"></div>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
+                                <tr dir-paginate="x in people | filter:{chamber:'senate'} | filter:searchSenate | itemsPerPage: 10" pagination-id="legPageSenate">
+                                    <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                    <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="legPageSenate"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
             </div>
             <div id="legDetails" class="panel panel-default panel-shadow item">
                 <div class="panel-heading" style="background-color: white;">
@@ -93,18 +139,21 @@
                         <i class="fa fa-chevron-left" aria-hidden="true"></i>
                     </button>
                     <h3 class="panel-title" style="display: inline;">Details</h3>
+                    <button type=button class="btn btn-default" style="float: right;">
+                        <i class="fa fa-star-o" aria-hidden="true"></i>
+                    </button>
                 </div>
                 <div class="container">
                 <div class="row">
                     <div class="col-md-6">
                        <table class="table" style="margin-top: 10px;"><tr>
-                           <td style="width: 35%;"><img src="https://theunitedstates.io/images/congress/original/{{legislator.personal.bioguide_id}}.jpg" alt="{{legislator.personal.first_name+' '+legislator.personal.first_name}}" height=200px></td>
+                           <td style="width: 35%;"><img ng-src="https://theunitedstates.io/images/congress/original/{{legislator.personal.bioguide_id}}.jpg" alt="{{legislator.personal.first_name+' '+legislator.personal.first_name}}" height=200px></td>
                            <td><table class="table">
                                <tr><td>{{legislator.personal.title}}. {{legislator.personal.last_name}}, {{legislator.personal.first_name}}</td></tr>
                                <tr><td><a href="mailto:{{legislator.personal.oc_email}}">{{legislator.personal.oc_email}}</a></td></tr>
                                <tr><td>Chamber: {{legislator.personal.chamber==='house'?'House':'Senate'}}</td></tr>
                                <tr><td>Contact: <a href="tel: {{legislator.personal.phone}}">{{legislator.personal.phone}}</a></td></tr>
-                               <tr><td><img src="{{legislator.personal.party==='R'?'images/republicans.png':(legislator.personal.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{legislator.personal.party}}" height="30px" class="tableImages">{{legislator.personal.party==='R'?'Republican':(legislator.personal.party==='D'?'Democrat':'Independent')}}</td></tr>
+                               <tr><td><img ng-src="{{legislator.personal.party==='R'?'images/republicans.png':(legislator.personal.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{legislator.personal.party}}" height="30px" class="tableImages">{{legislator.personal.party==='R'?'Republican':(legislator.personal.party==='D'?'Democrat':'Independent')}}</td></tr>
                            </table></td>
                         </tr></table>
                         <table class="table">
@@ -115,14 +164,37 @@
                             <tr><td><b>State</b></td><td>{{legislator.personal.state_name}}</td></tr>
                             <tr><td><b>Fax</b></td><td><a href="tel: {{legislator.personal.fax}}">{{legislator.personal.fax}}</a></td></tr>
                             <tr><td><b>Birthday</b></td><td>{{formatTime(legislator.personal.birthday)}}</td></tr>
-                            <tr><td><b>Social Links</b></td><td></td></tr>
+                            <tr><td><b>Social Links</b></td><td>
+                                <a href="http://twitter.com/{{legislator.personal.twitter_id}}" target="_blank"><img src="images/twitter.png" alt="Twitter" height="30px"></a>
+                                <a href="http://www.facebook.com/{{legislator.personal.facebook_id}}" target="_blank"><img src="images/facebook.png" alt="Facebook" height="30px"></a>
+                                <a href="{{legislator.personal.website}}" target="_blank"><img src="images/world.png" alt="Website" height="30px"></a>
+                            </td></tr>
                         </table>
                     </div>
                     <div class="col-md-6">
-                        +++++++++++++++++++++++++++
+                        <h4>Committees</h4>
+                        <table class="table">
+                            <tr><th>Chamber</th><th>Committee ID</th><th>Name</th></tr>
+                            <tr ng-repeat="x in legislator.committees">
+                                <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
+                                <td>{{x.committee_id}}</td>
+                                <td>{{x.name}}</td>
+                            </tr>
+                        </table>
+                        <h4>Bills</h4>
+                        <table class="table">
+                            <tr><th>Bill ID</th><th>Title</th><th>Chamber</th><th>Bill Type</th><th>Congress</th><th>Link</th></tr>
+                            <tr ng-repeat="x in legislator.bills">
+                                <td>{{x.bill_id}}</td>
+                                <td>{{x.official_title}}</td>
+                                <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
+                                <td>{{x.bill_type}}</td>
+                                <td>{{x.congress}}</td>
+                                <td></td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
-                WOWWWWWWWW
                 </div>
             </div>
             </div>
@@ -141,6 +213,5 @@
             <hr>
         </div>
     </div>
-    <script>$('.carousel').carousel('pause');</script>
 </body>
 </html>

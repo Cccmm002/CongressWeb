@@ -16,9 +16,21 @@ $(document).ready(function(){
             $(".rightBox").css("margin-left","0");
         }
     });
+    $('#byState a').click(function(e){
+        e.preventDefault();
+        $(this).tab('show');
+    });
+    $('#byHouse a').click(function(e){
+        e.preventDefault();
+        $(this).tab('show');
+    });
+    $('#bySenate a').click(function(e){
+        e.preventDefault();
+        $(this).tab('show');
+    });
 });
 
-var app=angular.module('congressApp', ['angularUtils.directives.dirPagination','ui.bootstrap','ngAnimate']);
+var app=angular.module('congressApp', ['angularUtils.directives.dirPagination','ngAnimate']);
 
 app.controller('mainTabController', function(){
     this.nav_tab=1;

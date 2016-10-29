@@ -96,7 +96,7 @@
             }
             $data["count"]=$total_count;
 
-            usort($data["results"],"legSortHelper");
+            //usort($data["results"],"legSortHelper");
 
             $json_data=json_encode($data);
             file_put_contents("legislators.json", $json_data);

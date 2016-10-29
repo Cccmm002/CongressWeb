@@ -13,11 +13,61 @@
             getStateNames($url_prefix,$api_key);
         else if($_GET["database"]=="legislators") 
             getTotalLegislators($url_prefix,$api_key);
+        else if($_GET["database"]=='bills') {
+            if(file_exists("bills.json")) {
+                echo file_get_contents("bills.json");
+            }
+            else {
+                $active=getBills($url_prefix,$api_key,'true');
+                $new=getBills($url_prefix,$api_key,'false');
+                $data=array();
+                $data["results"]=array_merge($active["results"],$new["results"]);
+                $data["count"]=$active["count"]+$new["count"];
+                $json_data=json_encode($data);
+                file_put_contents("bills.json", $json_data);
+                echo $json_data;
+            }
+        }
+    }
+
+    function getBills($url_prefix,$api_key,$active) {
+        $data=array();
+        $data["results"]=array();
+        $url=$url_prefix . "bills?history.active=" . $active . "&apikey=" . $api_key;
+        //bill_id, bill_type, title, chamber, introduced_on, sponsor
+        $json=file_get_contents($url);
+        $obj=json_decode($json);
+        $count=$obj->count;
+        $total_count=0;
+        $p=1;
+        while($total_count<$count && $total_count<50) {
+            $urlRequest=$url . "&page=" . $p;
+            $json=file_get_contents($urlRequest);
+            $obj=json_decode($json);
+            $c=$obj->page->count;
+            $j=0;
+            while($j<$c) {
+                $rec=array();
+                $rec["bill_id"]=$obj->results[$j]->bill_id;
+                $rec["bill_type"]=$obj->results[$j]->bill_type;
+                $rec["official_title"]=$obj->results[$j]->official_title;
+                $rec["chamber"]=$obj->results[$j]->chamber;
+                $rec["introduced_on"]=$obj->results[$j]->introduced_on;
+                $rec["sponsor"]=$obj->results[$j]->sponsor;
+                $rec["active"]=$obj->results[$j]->history->active;
+                array_push($data["results"], $rec);
+                $total_count=$total_count+1;
+                $j=$j+1;
+            }
+            $p=$p+1;
+        }
+        $data["count"]=$total_count;
+        return $data;
     }
 
     function getLegislatorDetail($id,$url_prefix,$api_key) {
         $data=array();
-        $persoanlRequestUrl=$url_prefix . "legislators" . "?bioguide_id=" . $id . "&apikey=" . $api_key;
+        $persoanlRequestUrl=$url_prefix . "legislators?bioguide_id=" . $id . "&apikey=" . $api_key;
         $obj=json_decode(file_get_contents($persoanlRequestUrl));
         $data["personal"]=$obj->results[0];
         $comRequestUrl=$url_prefix . "committees?member_ids=" . $id . "&apikey=" . $api_key;
@@ -47,10 +97,6 @@
             $i=$i+1;
         }
         echo json_encode($data);
-    }
-
-    function legSortHelper($a, $b) {
-        return strnatcmp($a["state_name"],$b["state_name"]);
     }
 
     function getStateNames($url_prefix,$api_key) {
@@ -95,8 +141,6 @@
                 $p=$p+1;
             }
             $data["count"]=$total_count;
-
-            //usort($data["results"],"legSortHelper");
 
             $json_data=json_encode($data);
             file_put_contents("legislators.json", $json_data);

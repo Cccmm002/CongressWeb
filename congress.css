@@ -12,6 +12,10 @@ body {
         width: 50px;
     }
     
+    .navbar-fixed-left .navbar-nav > li {
+        width: 49px!important;
+    }
+    
     .navbar-fixed-left a {
         width: 45px;
         margin-left: 14px;
@@ -24,6 +28,30 @@ body {
     .panelHeaderDropdown {
         float: right;
         width: 120px;
+    }
+    
+    #legDetailLeftBottom tr td:first-child {
+        display: none;
+    }
+    
+    #legDetailProgress {
+        display: none;
+    }
+    
+    #legDetailCom td:last-child, #legDetailCom th:last-child {
+        display: none;
+    }
+    
+    #legDetailBill td, #legDetailBill th {
+        display: none;
+    }
+    
+    #legDetailBill td:first-child, #legDetailBill th:first-child {
+        display: table-cell;
+    }
+    
+    #legDetailBill td:last-child, #legDetailBill th:last-child {
+        display: table-cell;
     }
 }
 

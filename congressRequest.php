@@ -9,6 +9,12 @@
             getLegislatorDetail($_GET["id"],$url_prefix,$api_key);
         else if($_GET["database"]=="bills")
             getBillDetail($_GET["id"],$url_prefix,$api_key);
+        else if($_GET["database"]=="legislators_favorites")
+            getLegislatorFavorite($_GET["id"],$url_prefix,$api_key);
+        else if($_GET["database"]=="bills_favorites")
+            getBillFavorite($_GET["id"],$url_prefix,$api_key);
+        else if($_GET["database"]=="coms_favorites")
+            getCommitteeFavorite($_GET["id"],$url_prefix,$api_key);
     }
     else {
         if($_GET["database"]=="states")
@@ -42,6 +48,73 @@
                 echo $res;
             }
         }
+    }
+
+    function getLegislatorFavorite($id,$url_prefix,$api_key) {
+        $arr=explode(",", $id);
+        $data=array();
+        foreach($arr as &$str) {
+            if($str=="" || $str==" ")
+                continue;
+            $rec=array();
+            $url=$url_prefix . "legislators?bioguide_id=" . $str . "&apikey=" . $api_key;
+            $obj=json_decode(file_get_contents($url));
+            if($obj->count==0)
+                continue;
+            $rec["bioguide_id"]=$obj->results[0]->bioguide_id;
+            $rec["party"]=$obj->results[0]->party;
+            $rec["first_name"]=$obj->results[0]->first_name;
+            $rec["last_name"]=$obj->results[0]->last_name;
+            $rec["middle_name"]=$obj->results[0]->middle_name;
+            $rec["chamber"]=$obj->results[0]->chamber;
+            $rec["state_name"]=$obj->results[0]->state_name;
+            $rec["oc_email"]=$obj->results[0]->oc_email;
+            array_push($data, $rec);
+        }
+        echo json_encode($data);
+    }
+
+    function getBillFavorite($id,$url_prefix,$api_key) {
+        $arr=explode(",", $id);
+        $data=array();
+        foreach($arr as &$str) {
+            if($str=="" || $str==" ")
+                continue;
+            $rec=array();
+            $url=$url_prefix . "bills?bill_id=" . $str . "&apikey=" . $api_key;
+            $obj=json_decode(file_get_contents($url));
+            if($obj->count==0)
+                continue;
+            $rec["bioguide_id"]=$obj->results[0]->bill_id;
+            $rec["bill_type"]=$obj->results[0]->bill_type;
+            $rec["official_title"]=$obj->results[0]->official_title;
+            $rec["chamber"]=$obj->results[0]->chamber;
+            $rec["introduced_on"]=$obj->results[0]->introduced_on;
+            $rec["sponsor"]=$obj->results[0]->sponsor;
+            array_push($data, $rec);
+        }
+        echo json_encode($data);
+    }
+
+    function getCommitteeFavorite($id,$url_prefix,$api_key) {
+        $arr=explode(",", $id);
+        $data=array();
+        foreach($arr as &$str) {
+            if($str=="" || $str==" ")
+                continue;
+            $rec=array();
+            $url=$url_prefix . "committees?committee_id=" . $str . "&apikey=" . $api_key;
+            $obj=json_decode(file_get_contents($url));
+            if($obj->count==0)
+                continue;
+            $rec["committee_id"]=$obj->results[0]->committee_id;
+            $rec["name"]=$obj->results[0]->name;
+            $rec["chamber"]=$obj->results[0]->chamber;
+            $rec["parent_committee_id"]=$obj->results[0]->parent_committee_id;
+            $rec["subcommittee"]=$obj->results[0]->subcommittee;
+            array_push($data, $rec);
+        }
+        echo json_encode($data);
     }
 
     function getBillDetail($id,$url_prefix,$api_key) {
@@ -112,7 +185,7 @@
                 "chamber" => $bills->results[$i]->chamber,
                 "bill_type" =>$bills->results[$i]->bill_type,
                 "congress" => $bills->results[$i]->congress,
-                "urls" => $bills->results[$i]->urls,
+                "urls" => $bills->results[$i]->last_version->urls,
             );
             array_push($data["bills"],$cur);
             $i=$i+1;

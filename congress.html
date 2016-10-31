@@ -75,7 +75,7 @@
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
-                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -99,7 +99,7 @@
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
-                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -123,7 +123,7 @@
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
-                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="panelDetails.detailShow('/' + x.bioguide_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -140,8 +140,11 @@
                         <i class="fa fa-chevron-left" aria-hidden="true"></i>
                     </button>
                     <h3 class="panel-title" style="display: inline;">Details</h3>
-                    <button type=button class="btn btn-default" style="float: right;">
+                    <button type=button class="btn btn-default" style="float: right;" ng-if="panelDetails.isFavorite('/' + legislator.personal.bioguide_id)===false" ng-click="panelDetails.setFavorite('/' + legislator.personal.bioguide_id)">
                         <i class="fa fa-star-o" aria-hidden="true"></i>
+                    </button>
+                    <button type=button class="btn btn-default" style="float: right;" ng-if="panelDetails.isFavorite('/' + legislator.personal.bioguide_id)===true" ng-click="panelDetails.removeFavorite('/' + legislator.personal.bioguide_id)">
+                        <i class="fa fa-star" aria-hidden="true" style="color: yellow; -webkit-text-stroke-width: 1px;"></i>
                     </button>
                 </div>
                 <div class="container">
@@ -168,9 +171,9 @@
                             <tr><td><b>Fax</b></td><td><a href="tel: {{legislator.personal.fax}}">{{legislator.personal.fax}}</a></td></tr>
                             <tr><td><b>Birthday</b></td><td>{{formatTime(legislator.personal.birthday)}}</td></tr>
                             <tr><td><b>Social Links</b></td><td>
-                                <a href="http://twitter.com/{{legislator.personal.twitter_id}}" target="_blank"><img src="images/twitter.png" alt="Twitter" height="30px"></a>
-                                <a href="http://www.facebook.com/{{legislator.personal.facebook_id}}" target="_blank"><img src="images/facebook.png" alt="Facebook" height="30px"></a>
-                                <a href="{{legislator.personal.website}}" target="_blank"><img src="images/world.png" alt="Website" height="30px"></a>
+                                <a href="http://twitter.com/{{legislator.personal.twitter_id}}" target="_blank" ng-if="legislator.personal.twitter_id"><img src="images/twitter.png" alt="Twitter" height="30px"></a>
+                                <a href="http://www.facebook.com/{{legislator.personal.facebook_id}}" target="_blank" ng-if="legislator.personal.facebook_id"><img src="images/facebook.png" alt="Facebook" height="30px"></a>
+                                <a href="{{legislator.personal.website}}" target="_blank" ng-if="legislator.personal.website"><img src="images/world.png" alt="Website" height="30px"></a>
                             </td></tr>
                         </table>
                     </div>
@@ -193,7 +196,7 @@
                                 <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
                                 <td>{{x.bill_type}}</td>
                                 <td>{{x.congress}}</td>
-                                <td><a href="{{x.urls.congress}}" target="_blank">Link</a></td>
+                                <td><a href="{{x.urls.pdf}}" target="_blank">Link</a></td>
                             </tr>
                         </table>
                     </div>
@@ -234,7 +237,7 @@
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td>{{x.introduced_on}}</td>
                                     <td>{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</td>
-                                    <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="billDetailCon.detailShow('/' + x.bill_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="detailShow('/' + x.bill_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -259,7 +262,7 @@
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td>{{x.introduced_on}}</td>
                                     <td>{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</td>
-                                    <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="billDetailCon.detailShow('/' + x.bill_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="detailShow('/' + x.bill_id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -276,8 +279,11 @@
                         <i class="fa fa-chevron-left" aria-hidden="true"></i>
                     </button>
                     <h3 class="panel-title" style="display: inline;">Details</h3>
-                    <button type=button class="btn btn-default" style="float: right;">
+                    <button type=button class="btn btn-default" style="float: right;" ng-if="billDetailCon.isFavorite('/' + bill.bill_id)===false" ng-click="billDetailCon.setFavorite('/' + bill.bill_id)">
                         <i class="fa fa-star-o" aria-hidden="true"></i>
+                    </button>
+                    <button type=button class="btn btn-default" style="float: right;" ng-if="billDetailCon.isFavorite('/' + bill.bill_id)===true" ng-click="billDetailCon.removeFavorite('/' + bill.bill_id)">
+                        <i class="fa fa-star" aria-hidden="true" style="color: yellow; -webkit-text-stroke-width: 1px;"></i>
                     </button>
                 </div>
                 <div class="container">
@@ -325,7 +331,14 @@
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th><th>Contact</th><th>Office</th></tr>
                                 <tr dir-paginate="x in committees | filter:{chamber:'house'} | filter:comSearchHouse | itemsPerPage: 10" pagination-id="comPageHouse">
-                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===true" ng-click="com.removeFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star" aria-hidden="true" style="color: yellow; -webkit-text-stroke-width: 1px;"></i>
+                                        </button>
+                                    </td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.name}}</div></td>
@@ -350,7 +363,14 @@
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th></tr>
                                 <tr dir-paginate="x in committees | filter:{chamber:'senate'} | filter:comSearchSenate | itemsPerPage: 10" pagination-id="comPageSenate">
-                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===true" ng-click="com.removeFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star" aria-hidden="true" style="color: yellow; -webkit-text-stroke-width: 1px;"></i>
+                                        </button>
+                                    </td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.name}}</div></td>
@@ -373,7 +393,14 @@
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th></tr>
                                 <tr dir-paginate="x in committees | filter:{chamber:'joint'} | filter:comSearchJoint | itemsPerPage: 10" pagination-id="comPageJoint">
-                                    <td><button type=button class="btn btn-default"><i class="fa fa-star-o" aria-hidden="true"></i></button></td>
+                                    <td>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===true" ng-click="com.removeFavorite('/' + x.committee_id)">
+                                            <i class="fa fa-star" aria-hidden="true" style="color: yellow; -webkit-text-stroke-width: 1px;"></i>
+                                        </button>
+                                    </td>
                                     <td><img src="images/senate.svg" alt="Joint" height="30px" class="tableImages">Joint</td>
                                     <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.name}}</div></td>
@@ -391,6 +418,48 @@
         <div id="favoritePage" class="rightBoxPage" ng-show="mainTab.isSelected(4)">
             <h2>Favorites</h2>
             <hr>
+            <div id="favListPanel" class="panel panel-default panel-shadow">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#favLeg" aria-controls="favLeg" role="tab" data-toggle="tab">Legislators</a></li>
+                    <li role="presentation"><a href="#favBill" aria-controls="favBill" role="tab" data-toggle="tab">Bills</a></li>
+                    <li role="presentation"><a href="#favCom" aria-controls="favCom" role="tab" data-toggle="tab">Committees</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in active" id="favLeg">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="legFavoriteController as legFavCon">
+                        <div class="panel-heading">
+                            <b>Favorite Legislators</b>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Image</th><th>Party</th><th>Name</th><th>Chamber</th><th>State</th><th>Email</th><th></th></tr>
+                                <tr dir-paginate="x in legs | filter:comSearchHouse | itemsPerPage: 10" pagination-id="legFavPage">
+                                    <td>
+                                        <button type="button" class="btn btn-default">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td><img ng-src="https://theunitedstates.io/images/congress/original/{{x.bioguide_id}}.jpg" alt="{{x.first_name+' '+x.first_name}}" height=35px></td>
+                                    <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
+                                    <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
+                                    <td><div style="padding-top: 5px;"><a href="mailto: {{x.oc_email}}" target="_blank">{{x.oc_email}}</a></div></td>
+                                    <td><button type="button" class="btn btn-primary" role="button" ng-click="legFavCon.legFavDetail('/' + x.bioguide_id)">View Details</button></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="legFavPage"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="favBill">
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="favCom">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

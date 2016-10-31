@@ -1,29 +1,33 @@
 var requestUrl="congressRequest.php";
 
-function addStorage(database,id) {
+function addStorage(database,id,obj) {
     if(!existStorage(database,id)) {
-        var str=localStorage.getItem(database)?localStorage.getItem(database):"";
-        str+=','+id;
+        var str=localStorage.getItem(database)?localStorage.getItem(database):"{\"record\":[]}";
+        var jp=JSON.parse(str);
+        jp["record"].push(obj);
         if(!localStorage.getItem(database))
             localStorage.removeItem(database);
-        localStorage.setItem(database,str);
+        localStorage.setItem(database,JSON.stringify(jp));
     }
 }
 
 function removeStorage(database,id) {
     if(localStorage.getItem(database)){
         var str=localStorage.getItem(database);
-        var arr=str.split(',');
-        var index=arr.indexOf(id);
-        if(index>=0) {
-            arr.splice(index,1);
+        var arr=JSON.parse(str);
+        var len=arr["record"].length;
+        var index=-1;
+        for(var i=0;i<len;i++) {
+            if(arr["record"][i]["id"]===id) {
+                index=i;
+                break;
+            }
         }
-        var len=arr.length;
-        str=arr[0];
-        for(var i=1;i<len;i++)
-            str+=','+arr[i];
+        if(index>=0) {
+            arr["record"].splice(index,1);
+        }
         localStorage.removeItem(database);
-        localStorage.setItem(database,str);
+        localStorage.setItem(database,JSON.stringify(arr));
     }
 }
 
@@ -31,9 +35,13 @@ function existStorage(database,id) {
     if(!localStorage.getItem(database))
         return false;
     var str=localStorage.getItem(database);
-    var arr=str.split(',');
-    var index=arr.indexOf(id);
-    return index>=0;
+    var obj=JSON.parse(str);
+    var len=obj["record"].length;
+    for(var i=0;i<len;i++) {
+        if(obj["record"][i]["id"]===id)
+            return true;
+    }
+    return false;
 }
 
 $(document).ready(function(){
@@ -160,7 +168,19 @@ app.controller('committeeTableController',function($scope,$http){
     });
     
     this.setFavorite=function(id) {
-        addStorage("coms",id.substr(1));
+        var iid=id.substr(1);
+        var len=$scope.committees.length;
+        for(var i=0;i<len;i++) {
+            if($scope.committees[i]["committee_id"]!=iid)
+                continue;
+            var l={};
+            l["id"]=$scope.committees[i]["committee_id"];
+            l["chamber"]=$scope.committees[i]["chamber"];
+            l["name"]=$scope.committees[i]["name"];
+            l["parent_committee_id"]=$scope.committees[i]["parent_committee_id"];
+            l["subcommittee"]=$scope.committees[i]["subcommittee"];
+            addStorage("coms",iid,l);
+        }
     };
     
     this.isFavorite=function(id) {
@@ -177,11 +197,8 @@ app.controller('legFavoriteController',function($scope,$http){
     
     $scope.loadData=function(){
         
-        var ids=localStorage.getItem("legislators");
-    
-        $http.get(requestUrl + "?database=legislators_favorites&id=" + ids).then(function(response){
-            $scope.legs=response.data;
-        });
+        var obj=JSON.parse(localStorage.getItem("legislators"));
+        $scope.legs=obj["record"];
         
     };
     
@@ -189,11 +206,68 @@ app.controller('legFavoriteController',function($scope,$http){
         $scope.$emit("favDetail",1,id);
     };
     
+    this.deleteFav=function(id){
+        removeStorage("legislators",id.substr(1));
+        $scope.loadData();
+    };
+    
     $scope.$on("fav",function(d){
         $scope.loadData();
     });
     
-    //$scope.loadData();
+});
+
+app.controller('billFavoriteController',function($scope,$http){
+    
+    $scope.loadData=function(){
+        
+        var obj=JSON.parse(localStorage.getItem("bills"));
+        $scope.bills=obj["record"];
+        
+    };
+    
+    this.billFavDetail=function(id){
+        $scope.$emit("favDetail",2,id);
+    };
+    
+    this.deleteFav=function(id){
+        removeStorage("bills",id.substr(1));
+        $scope.loadData();
+    };
+    
+    $scope.$on("fav",function(d){
+        $scope.loadData();
+    });
+    
+    $scope.upper=function(str){
+        if(str)
+            return str.toUpperCase();
+    };
+    
+});
+
+app.controller('comFavoriteController',function($scope,$http){
+    
+    $scope.loadData=function(){
+        
+        var obj=JSON.parse(localStorage.getItem("coms"));
+        $scope.coms=obj["record"];
+        
+    };
+    
+    this.deleteFav=function(id){
+        removeStorage("coms",id.substr(1));
+        $scope.loadData();
+    };
+    
+    $scope.$on("fav",function(d){
+        $scope.loadData();
+    });
+    
+    $scope.upper=function(str){
+        if(str)
+            return str.toUpperCase();
+    };
     
 });
 
@@ -227,7 +301,16 @@ app.controller('legDetailsPanelController', function($scope, $http){
     });
     
     this.setFavorite=function(id) {
-        addStorage("legislators",id.substr(1));
+        var l={};
+        l["id"]=$scope.legislator.personal["bioguide_id"];
+        l["party"]=$scope.legislator.personal["party"];
+        l["title"]=$scope.legislator.personal["title"];
+        l["first_name"]=$scope.legislator.personal["first_name"];
+        l["last_name"]=$scope.legislator.personal["last_name"];
+        l["chamber"]=$scope.legislator.personal["chamber"];
+        l["state_name"]=$scope.legislator.personal["state_name"];
+        l["oc_email"]=$scope.legislator.personal["oc_email"];
+        addStorage("legislators",id.substr(1),l);
     };
     
     this.isFavorite=function(id) {
@@ -266,7 +349,16 @@ app.controller('billsPanelController',function($scope,$http){
     });
     
     this.setFavorite=function(id) {
-        addStorage("bills",id.substr(1));
+        var l={};
+        l["id"]=$scope.bill["bill_id"];
+        l["bill_type"]=$scope.bill["bill_type"];
+        l["official_title"]=$scope.bill["official_title"];
+        l["first_name"]=$scope.bill.sponsor["first_name"];
+        l["last_name"]=$scope.bill.sponsor["last_name"];
+        l["chamber"]=$scope.bill["chamber"];
+        l["title"]=$scope.bill.sponsor["title"];
+        l["introduced_on"]=$scope.bill["introduced_on"];
+        addStorage("bills",id.substr(1),l);
     };
     
     this.isFavorite=function(id) {

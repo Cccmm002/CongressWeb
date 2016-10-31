@@ -303,7 +303,7 @@
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <object width="100%" height="500px" data="{{bill.last_version.urls.pdf}}"></object>
+                        <div class="pdfViewer"><object width="100%" height="500px" data="{{bill.last_version.urls.pdf}}"></object></div>
                     </div>
                 </div>
                 </div>
@@ -433,19 +433,19 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th></th><th>Image</th><th>Party</th><th>Name</th><th>Chamber</th><th>State</th><th>Email</th><th></th></tr>
-                                <tr dir-paginate="x in legs | filter:comSearchHouse | itemsPerPage: 10" pagination-id="legFavPage">
+                                <tr dir-paginate="x in legs | itemsPerPage: 10" pagination-id="legFavPage">
                                     <td>
-                                        <button type="button" class="btn btn-default">
+                                        <button type="button" class="btn btn-default" ng-click="legFavCon.deleteFav('/' + x.id)">
                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                         </button>
                                     </td>
-                                    <td><img ng-src="https://theunitedstates.io/images/congress/original/{{x.bioguide_id}}.jpg" alt="{{x.first_name+' '+x.first_name}}" height=35px></td>
+                                    <td><img ng-src="https://theunitedstates.io/images/congress/original/{{x.id}}.jpg" alt="{{x.first_name+' '+x.first_name}}" height=35px></td>
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
                                     <td><div style="padding-top: 5px;"><a href="mailto: {{x.oc_email}}" target="_blank">{{x.oc_email}}</a></div></td>
-                                    <td><button type="button" class="btn btn-primary" role="button" ng-click="legFavCon.legFavDetail('/' + x.bioguide_id)">View Details</button></td>
+                                    <td><button type="button" class="btn btn-primary" role="button" ng-click="legFavCon.legFavDetail('/' + x.id)">View Details</button></td>
                                 </tr>
                             </table>
                             <div style="text-align: center;">
@@ -455,8 +455,60 @@
                     </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="favBill">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="billFavoriteController as billFavCon">
+                        <div class="panel-heading">
+                            <b>Favorite Bills</b>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Bill ID</th><th>Bill Type</th><th style="width: 25%">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
+                                <tr dir-paginate="x in bills | itemsPerPage: 10" pagination-id="billFavPage">
+                                    <td>
+                                        <button type="button" class="btn btn-default" ng-click="billFavCon.deleteFav('/' + x.id)">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.id)}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.bill_type)}}</div></td>
+                                    <td style="width: 25%"><div style="padding-top: 5px;">{{x.official_title}}</div></td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.introduced_on}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.title + ". " + x.last_name + ", " + x.first_name}}</div></td>
+                                    <td><button type="button" class="btn btn-primary" role="button" ng-click="billFavCon.billFavDetail('/' + x.id)">View Details</button></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="billFavPage"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                     <div role="tabpanel" class="tab-pane fade" id="favCom">
+                    <div class="panel panel-default" style="margin: 10px;" ng-controller="comFavoriteController as comFavCon">
+                        <div class="panel-heading">
+                            <b>Favorite Committees</b>
+                        </div>
+                        <div class="panel-body table-responsive">
+                            <table class="table table-hover">
+                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th style="width: 40%">Name</th><th>Parent Committee</th><th>Sub Committee</th></tr>
+                                <tr dir-paginate="x in coms | itemsPerPage: 10" pagination-id="comFavPage">
+                                    <td>
+                                        <button type="button" class="btn btn-default" ng-click="comFavCon.deleteFav('/' + x.id)">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </td>
+                                    <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.id}}</div></td>
+                                    <td style="width: 40%"><div style="padding-top: 5px;">{{x.name}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.parent_committee_id}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.subcommittee===true?'true':'false'}}</div></td>
+                                </tr>
+                            </table>
+                            <div style="text-align: center;">
+                                <dir-pagination-controls pagination-id="comFavPage"></dir-pagination-controls>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>

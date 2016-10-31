@@ -53,6 +53,10 @@ body {
     #legDetailBill td:last-child, #legDetailBill th:last-child {
         display: table-cell;
     }
+    
+    .pdfViewer {
+        display: none;
+    }
 }
 
 @media screen and (min-width: 768px) {
@@ -71,6 +75,10 @@ body {
     .panelHeaderDropdown {
         float: right;
         width: 180px;
+    }
+    
+    .pdfViewer {
+        display: block;
     }
 }
 

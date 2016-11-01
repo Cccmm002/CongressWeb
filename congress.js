@@ -232,7 +232,7 @@ app.controller('billFavoriteController',function($scope,$http){
     $scope.loadData=function(){
         
         var obj=JSON.parse(localStorage.getItem("bills"));
-        if(obj["record"])
+        if(obj)
             $scope.bills=obj["record"];
         else 
             $scope.bills=[];
@@ -264,7 +264,7 @@ app.controller('comFavoriteController',function($scope,$http){
     $scope.loadData=function(){
         
         var obj=JSON.parse(localStorage.getItem("coms"));
-        if(obj["record"])
+        if(obj)
             $scope.coms=obj["record"];
         else 
             $scope.coms=[];

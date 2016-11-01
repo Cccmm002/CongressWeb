@@ -69,7 +69,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
-                                <tr dir-paginate="x in people | orderBy:'state_name' | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPageState">
+                                <tr dir-paginate="x in people | orderBy:['state_name','last_name'] | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPageState">
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
@@ -93,7 +93,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
-                                <tr dir-paginate="x in people | filter:{chamber:'house'} | filter:searchHouse | itemsPerPage: 10" pagination-id="legPageHouse">
+                                <tr dir-paginate="x in people | orderBy:'last_name' | filter:{chamber:'house'} | filter:searchHouse | itemsPerPage: 10" pagination-id="legPageHouse">
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
@@ -117,7 +117,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
-                                <tr dir-paginate="x in people | filter:{chamber:'senate'} | filter:searchSenate | itemsPerPage: 10" pagination-id="legPageSenate">
+                                <tr dir-paginate="x in people | orderBy:'last_name' | filter:{chamber:'senate'} | filter:searchSenate | itemsPerPage: 10" pagination-id="legPageSenate">
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
@@ -168,7 +168,7 @@
                             <tr id="legDetailProgress"><td><b>Term</b></td><td><div class="progress"><div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}" style="width: {{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%;">{{getProgress(legislator.personal.term_start,legislator.personal.term_end)}}%</div></div></td></tr>
                             <tr><td><b>Office</b></td><td>{{legislator.personal.office}}</td></tr>
                             <tr><td><b>State</b></td><td>{{legislator.personal.state_name}}</td></tr>
-                            <tr><td><b>Fax</b></td><td><a href="tel: {{legislator.personal.fax}}">{{legislator.personal.fax}}</a></td></tr>
+                            <tr ng-if="legislator.personal.fax"><td><b>Fax</b></td><td><a href="tel: {{legislator.personal.fax}}">{{legislator.personal.fax}}</a></td></tr>
                             <tr><td><b>Birthday</b></td><td>{{formatTime(legislator.personal.birthday)}}</td></tr>
                             <tr><td><b>Social Links</b></td><td>
                                 <a href="http://twitter.com/{{legislator.personal.twitter_id}}" target="_blank" ng-if="legislator.personal.twitter_id"><img src="images/twitter.png" alt="Twitter" height="30px"></a>
@@ -330,7 +330,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th><th>Contact</th><th>Office</th></tr>
-                                <tr dir-paginate="x in committees | filter:{chamber:'house'} | filter:comSearchHouse | itemsPerPage: 10" pagination-id="comPageHouse">
+                                <tr dir-paginate="x in committees | orderBy:'committee_id' | filter:{chamber:'house'} | filter:comSearchHouse | itemsPerPage: 10" pagination-id="comPageHouse">
                                     <td>
                                         <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
                                             <i class="fa fa-star-o" aria-hidden="true"></i>
@@ -362,7 +362,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th></tr>
-                                <tr dir-paginate="x in committees | filter:{chamber:'senate'} | filter:comSearchSenate | itemsPerPage: 10" pagination-id="comPageSenate">
+                                <tr dir-paginate="x in committees | orderBy:'committee_id' | filter:{chamber:'senate'} | filter:comSearchSenate | itemsPerPage: 10" pagination-id="comPageSenate">
                                     <td>
                                         <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
                                             <i class="fa fa-star-o" aria-hidden="true"></i>
@@ -392,7 +392,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th></tr>
-                                <tr dir-paginate="x in committees | filter:{chamber:'joint'} | filter:comSearchJoint | itemsPerPage: 10" pagination-id="comPageJoint">
+                                <tr dir-paginate="x in committees | orderBy:'committee_id' | filter:{chamber:'joint'} | filter:comSearchJoint | itemsPerPage: 10" pagination-id="comPageJoint">
                                     <td>
                                         <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
                                             <i class="fa fa-star-o" aria-hidden="true"></i>

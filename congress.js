@@ -159,6 +159,13 @@ app.controller('billsTableController',function($scope,$http){
             return str.toUpperCase();
     };
     
+    $scope.timeCompare=function(t1,t2){
+        var a=moment(t1,"YYY-MM-DD");
+        var b=moment(t2,"YYY-MM-DD");
+        if(a==b) return 0;
+        return a<b?1:-1;
+    };
+    
 });
 
 app.controller('committeeTableController',function($scope,$http){
@@ -198,7 +205,10 @@ app.controller('legFavoriteController',function($scope,$http){
     $scope.loadData=function(){
         
         var obj=JSON.parse(localStorage.getItem("legislators"));
-        $scope.legs=obj["record"];
+        if(obj["record"])
+            $scope.legs=obj["record"];
+        else
+            $scope.legs=[];
         
     };
     
@@ -222,7 +232,10 @@ app.controller('billFavoriteController',function($scope,$http){
     $scope.loadData=function(){
         
         var obj=JSON.parse(localStorage.getItem("bills"));
-        $scope.bills=obj["record"];
+        if(obj["record"])
+            $scope.bills=obj["record"];
+        else 
+            $scope.bills=[];
         
     };
     
@@ -251,7 +264,10 @@ app.controller('comFavoriteController',function($scope,$http){
     $scope.loadData=function(){
         
         var obj=JSON.parse(localStorage.getItem("coms"));
-        $scope.coms=obj["record"];
+        if(obj["record"])
+            $scope.coms=obj["record"];
+        else 
+            $scope.coms=[];
         
     };
     
@@ -278,9 +294,10 @@ app.controller('legDetailsPanelController', function($scope, $http){
         $http.get(requestUrl + "?database=legislators&id=" + bioguide_id.substr(1)).then(function(response){
             $scope.legislator=response.data;
         });
-        
-        $("#legis").carousel('next');
-        $('#legis').carousel('pause');
+        if($("#legis > .carousel-inner > .active").index()==0) {
+            $("#legis").carousel('next');
+            $('#legis').carousel('pause');
+        }
     };
     
     $scope.formatTime=function(time){
@@ -330,8 +347,10 @@ app.controller('billsPanelController',function($scope,$http){
         $http.get(requestUrl + "?database=bills&id=" + bill_id.substr(1)).then(function(response){
             $scope.bill=response.data;
         });
-        $('#billsCarousel').carousel('next');
-        $('#billsCarousel').carousel('pause');
+        if($("#billsCarousel > .carousel-inner > .active").index()==0) {
+            $('#billsCarousel').carousel('next');
+            $('#billsCarousel').carousel('pause');
+        }
     };
     
     $scope.upper=function(str){

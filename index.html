@@ -69,7 +69,7 @@
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
                                 <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
-                                <tr dir-paginate="x in people | orderBy:['state_name','last_name'] | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPageState">
+                                <tr dir-paginate="x in people | filter:{state_name:legStateFilter||undefined} | itemsPerPage: 10" pagination-id="legPageState">
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
@@ -116,12 +116,11 @@
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
-                                <tr><th>Party</th><th>Name</th><th>Chamber</th><th>District</th><th>State</th><th> </th></tr>
+                                <tr><th>Party</th><th>Name</th><th>Chamber</th><th>State</th><th> </th></tr>
                                 <tr dir-paginate="x in people | orderBy:'last_name' | filter:{chamber:'senate'} | filter:searchSenate | itemsPerPage: 10" pagination-id="legPageSenate">
                                     <td><img ng-src="{{x.party==='R'?'images/republicans.png':(x.party==='D'?'images/democrats.png':'images/independent.png')}}" alt="{{x.party}}" height="30px" class="tableImages"></td>
                                     <td><div style="padding-top: 5px;">{{x.last_name + ", " + x.first_name}}</div></td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
-                                    <td><div style="padding-top: 5px;">{{x.district==null?"N.A":"District "+x.district}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.state_name}}</div></td>
                                     <td><button type="button" class="btn btn-primary" href="#legis" role="button" data-slide="next" ng-click="detailShow('/' + x.bioguide_id)">View Details</button></td>
                                 </tr>
@@ -303,7 +302,7 @@
                         </table>
                     </div>
                     <div class="col-md-6">
-                        <div class="pdfViewer"><object width="100%" height="500px" data="{{bill.last_version.urls.pdf}}"></object></div>
+                        <div><object width="100%" height="500px" data="{{bill.last_version.urls.pdf}}"></object></div>
                     </div>
                 </div>
                 </div>

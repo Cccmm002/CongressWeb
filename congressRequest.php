@@ -206,14 +206,14 @@
             $data=array();
             $data["results"]=array();
             //bioguide_id, party, name, chamber, district, state
-            $requestUrl=$url_prefix . "legislators" . "?apikey=" . $api_key;
+            $requestUrl=$url_prefix . "legislators" . "?order=state__asc,last_name__asc&apikey=" . $api_key;
             $json=file_get_contents($requestUrl);
             $obj=json_decode($json);
             $count=$obj->count;
             $total_count=0;
             $p=1;
             while($total_count<$count) {
-                $requestUrl=$url_prefix . "legislators" . "?apikey=" . $api_key . "&page=" . $p;
+                $requestUrl=$url_prefix . "legislators" . "?order=state__asc,last_name__asc&apikey=" . $api_key . "&page=" . $p;
                 $json=file_get_contents($requestUrl);
                 $obj=json_decode($json);
                 $c=$obj->page->count;

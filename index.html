@@ -228,14 +228,14 @@
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
-                                <tr><th>Bill ID</th><th>Bill Type</th><th style="width: 25%">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
+                                <tr><th>Bill ID</th><th>Bill Type</th><th class="billTitle">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
                                 <tr dir-paginate="x in bills | filter:{active:true} | filter:searchActiveBills | itemsPerPage:10" pagination-id="billActivePage">
-                                    <td>{{upper(x.bill_id)}}</td>
-                                    <td>{{upper(x.bill_type)}}</td>
-                                    <td style="width: 25%">{{x.official_title}}</td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.bill_id)}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.bill_type)}}</div></td>
+                                    <td class="billTitle">{{x.official_title}}</td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
-                                    <td>{{x.introduced_on}}</td>
-                                    <td>{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.introduced_on}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</div></td>
                                     <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="detailShow('/' + x.bill_id)">View Details</button></td>
                                 </tr>
                             </table>
@@ -253,14 +253,14 @@
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
-                                <tr><th>Bill ID</th><th>Bill Type</th><th style="width: 25%">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
+                                <tr><th>Bill ID</th><th>Bill Type</th><th class="billTitle">Title</th><th>Chamber</th><th>Introduced on</th><th>Sponsor</th><th></th></tr>
                                 <tr dir-paginate="x in bills | filter:{active:false} | filter:searchNewBills | itemsPerPage:10" pagination-id="billNewPage">
-                                    <td>{{upper(x.bill_id)}}</td>
-                                    <td>{{upper(x.bill_type)}}</td>
-                                    <td style="width: 25%">{{x.official_title}}</td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.bill_id)}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{upper(x.bill_type)}}</div></td>
+                                    <td class="billTitle">{{x.official_title}}</td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
-                                    <td>{{x.introduced_on}}</td>
-                                    <td>{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</td>
+                                    <td><div style="padding-top: 5px;">{{x.introduced_on}}</div></td>
+                                    <td><div style="padding-top: 5px;">{{x.sponsor.title}}. {{x.sponsor.last_name}}, {{x.sponsor.first_name}}</div></td>
                                     <td><button type="button" class="btn btn-primary" data-slide="next" role="button" ng-click="detailShow('/' + x.bill_id)">View Details</button></td>
                                 </tr>
                             </table>

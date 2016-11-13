@@ -1,6 +1,7 @@
 body {
     background-color: #F5F5F5;
     padding-top: 40px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @media screen and (max-width: 768px) {

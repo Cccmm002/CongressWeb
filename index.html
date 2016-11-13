@@ -13,6 +13,7 @@
     <script src="library/dirPagination.js"></script>
     <script src="library/moment.min.js"></script>
     <script src="congress.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
     <link href="congress.css" rel="stylesheet">
 </head>
 <header class="top-header navbar-fixed-top">
@@ -21,7 +22,7 @@
     </button>
     <div class="logo">
         <a href="http://sunlightfoundation.com/" target="_blank"><img src="images/logo.png" alt="Sunlight Foundation"></a>
-        <b class="h4">Congress API</b>
+        <span class="h4"><b>Congress API</b></span>
     </div>
 </header>
 <body ng-app="congressApp" ng-controller="mainTabController as mainTab">
@@ -195,7 +196,7 @@
                                 <td>{{x.chamber==="senate"?"Senate":"House"}}</td>
                                 <td>{{x.bill_type}}</td>
                                 <td>{{x.congress}}</td>
-                                <td><a href="{{x.urls.pdf}}" target="_blank">Link</a></td>
+                                <td><a href="{{x.urls.pdf}}" target="_blank" ng-if="x.urls.pdf">Link</a></td>
                             </tr>
                         </table>
                     </div>
@@ -328,7 +329,7 @@
                         </div>
                         <div class="panel-body table-responsive">
                             <table class="table table-hover">
-                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th>Name</th><th>Parent Committee</th><th>Contact</th><th>Office</th></tr>
+                                <tr><th></th><th>Chamber</th><th>Committee ID</th><th style="width: 45%;">Name</th><th>Parent Committee</th><th>Contact</th><th>Office</th></tr>
                                 <tr dir-paginate="x in committees | orderBy:'committee_id' | filter:{chamber:'house'} | filter:comSearchHouse | itemsPerPage: 10" pagination-id="comPageHouse">
                                     <td>
                                         <button type=button class="btn btn-default" ng-if="com.isFavorite('/' + x.committee_id)===false" ng-click="com.setFavorite('/' + x.committee_id)">
@@ -340,7 +341,7 @@
                                     </td>
                                     <td><img ng-src="{{x.chamber==='house'?'images/house.png':'images/senate.svg'}}" alt="{{x.chamber}}" height="30px" class="tableImages">{{x.chamber==='house'?'House':'Senate'}}</td>
                                     <td><div style="padding-top: 5px;">{{x.committee_id}}</div></td>
-                                    <td><div style="padding-top: 5px;">{{x.name}}</div></td>
+                                    <td style="width: 45%;"><div style="padding-top: 5px;">{{x.name}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.parent_committee_id}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.phone}}</div></td>
                                     <td><div style="padding-top: 5px;">{{x.office?x.office:'N.A'}}</div></td>

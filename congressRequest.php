@@ -10,6 +10,8 @@
             getLegislatorDetail($_GET["id"],$url_prefix,$api_key);
         else if($_GET["database"]=="bills")
             getBillDetail($_GET["id"],$url_prefix,$api_key);
+        else if($_GET["database"]=="committees")
+            getComDetail($_GET["id"],$url_prefix,$api_key);
         else if($_GET["database"]=="legislators_favorites")
             getLegislatorFavorite($_GET["id"],$url_prefix,$api_key);
         else if($_GET["database"]=="bills_favorites")
@@ -115,6 +117,13 @@
             $rec["subcommittee"]=$obj->results[0]->subcommittee;
             array_push($data, $rec);
         }
+        echo json_encode($data);
+    }
+
+    function getComDetail($id,$url_prefix,$api_key) {
+        $url=$url_prefix . "committees?committee_id=" . $id . "&apikey=" . $api_key;
+        $obj=json_decode(file_get_contents($url));
+        $data=$obj->results[0];
         echo json_encode($data);
     }
 

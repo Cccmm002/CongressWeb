@@ -1,6 +1,5 @@
 <?php 
-    //$url_prefix="http://congress.api.sunlightfoundation.com/";
-    $url_prefix="http://104.198.0.197:8080/";
+    $url_prefix="http://congress.api.sunlightfoundation.com/";
     $api_key="57fab857ce45488ba9ee33d6f73665b1";
     $database="";
     if($_GET["database"])
